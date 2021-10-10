@@ -5,10 +5,12 @@ import { getWord } from "../utils/getWord";
 import { Snake } from "../classes/Snake";
 import { Grid } from "../components/Grid";
 import { useModelSetup } from "../hooks/useModelSetup";
+import { useOnScreenResize } from "../hooks/useOnResize";
 
 const Home: NextPage = () => {
   const [currentWord, setCurrentWord] = useState<number | null>(null);
   const { recognizer, labels, loading } = useModelSetup();
+  const { height, width } = useOnScreenResize();
   const [snake, setSnake] = useState<Snake>(new Snake());
   const gridRef = useRef<HTMLDivElement>(null);
 
@@ -49,7 +51,7 @@ const Home: NextPage = () => {
           Stop listening
         </button>
         <div>current word:{currentWord && labels![currentWord]}</div>
-        <Grid />
+        <Grid height={height} width={width} />
       </div>
     </div>
   );

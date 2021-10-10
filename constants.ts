@@ -1,0 +1,1 @@
+export const PX_TO_REM_CONVERTER = 16;
