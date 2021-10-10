@@ -227,7 +227,7 @@
   version "3.9.0"
   resolved "https://registry.yarnpkg.com/@tensorflow/tfjs-converter/-/tfjs-converter-3.9.0.tgz#e00709002cbe04ff5cc43358d4a5662795513071"
 
-"@tensorflow/tfjs-core@3.9.0", "@tensorflow/tfjs-core@^3.9.0":
+"@tensorflow/tfjs-core@3.9.0":
   version "3.9.0"
   resolved "https://registry.yarnpkg.com/@tensorflow/tfjs-core/-/tfjs-core-3.9.0.tgz#5ca2356a14a58263840a6e3caee2467780db9450"
   dependencies:
