@@ -1,18 +1,15 @@
 import type { NextPage } from "next";
-import Head from "next/head";
-import { useState, useRef } from "react";
-import { getWord } from "../utils/getWord";
+import { useState } from "react";
 import { Snake } from "../classes/Snake";
 import { Grid } from "../components/Grid";
+import { Head } from "../components/Head";
 import { useModelSetup } from "../hooks/useModelSetup";
-import { useOnScreenResize } from "../hooks/useOnResize";
+import { getWord } from "../utils/getWord";
 
 const Home: NextPage = () => {
   const [currentWord, setCurrentWord] = useState<number | null>(null);
   const { recognizer, labels, loading } = useModelSetup();
-  const { height, width } = useOnScreenResize();
   const [snake, setSnake] = useState<Snake>(new Snake());
-  const gridRef = useRef<HTMLDivElement>(null);
 
   const listen = async () => {
     if (recognizer)
@@ -36,11 +33,7 @@ const Home: NextPage = () => {
   return (
     <div className="bg-gray-900 p-12 flex flex-col space-y-12 items-center min-h-screen">
       <div className="bg-gray-800 border rounded-md border-gray-700 text-white p-6 w-full">
-        <Head>
-          <title>Snek</title>
-          <meta name="description" content="Voice controlled Snake game" />
-          <link rel="icon" href="/favicon.ico" />
-        </Head>
+        <Head />
         <button onClick={() => listen()} className="p-4 border rounded-md mr-8">
           Listen
         </button>
@@ -50,8 +43,8 @@ const Home: NextPage = () => {
         >
           Stop listening
         </button>
-        <div>current word:{currentWord && labels![currentWord]}</div>
-        <Grid height={height} width={width} />
+        <div>current word: {currentWord && labels![currentWord]}</div>
+        <Grid snake={snake} />
       </div>
     </div>
   );
