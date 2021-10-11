@@ -15,7 +15,7 @@ type GridProps = HTMLProps<HTMLDivElement> & {
 export const Grid: React.FC<GridProps> = ({ direction, ...props }) => {
   const gridRef = useRef<HTMLDivElement>(null);
   const [snake, _] = useState<Snake>(new Snake());
-  const [delay, setDelay] = useState<number | null>(250);
+  const [delay, setDelay] = useState<number | null>(null);
   const { gridDimensions, gridLoading } = useSetupGrid(gridRef);
   const [gameState, setGameState] = useState<{
     won: boolean | null;
@@ -27,6 +27,7 @@ export const Grid: React.FC<GridProps> = ({ direction, ...props }) => {
   const [snakeLocations, setSnakeLocations] = useState(
     new Set<string>(`${snake.head.x} | ${snake.head.y}`)
   );
+  const [food, setFood] = useState<{ x: number; y: number } | null>(null);
 
   useInterval(() => {
     if (
@@ -57,11 +58,30 @@ export const Grid: React.FC<GridProps> = ({ direction, ...props }) => {
             col={col}
             key={`${row} | ${col}`}
             snake={isSnake}
-            food={false}
+            food={
+              food ? (food.x === row && food.y === col ? true : false) : false
+            }
           />
         );
       })
     );
+  };
+
+  const spawnFood = () => {
+    let xPos = Math.floor(Math.random() * gridDimensions.rows);
+    let yPos = Math.floor(Math.random() * gridDimensions.cols);
+    // if a snake is already on that square
+    while (snakeLocations.has(`${xPos} | ${yPos}`)) {
+      xPos = Math.floor(Math.random() * gridDimensions.rows);
+      yPos = Math.floor(Math.random() * gridDimensions.cols);
+    }
+    console.log(`Food spawning at: [${xPos}, ${yPos}] `);
+    setFood({ x: xPos, y: yPos });
+  };
+
+  const playGame = () => {
+    setDelay(250);
+    spawnFood();
   };
 
   return (
@@ -80,10 +100,7 @@ export const Grid: React.FC<GridProps> = ({ direction, ...props }) => {
         maxScore={maxScore}
       />
       <button onClick={() => setModalOpen((prev) => !prev)}>Toggle</button>
-      <button
-        onClick={() => setDelay(250)}
-        className="p-4 border rounded-md m-2"
-      >
+      <button onClick={() => playGame()} className="p-4 border rounded-md m-2">
         Play
       </button>
     </div>
