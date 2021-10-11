@@ -1,21 +1,55 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Snake } from "../classes/Snake";
+import useInterval from "../hooks/useInterval";
 import { useSetupGrid } from "../hooks/useSetupGrid";
 import { SnakeNode } from "../types";
 import { range } from "../utils/range";
 import { GridNode } from "./GridNode";
 
 interface GridProps {
-  snake: Snake;
+  direction: string;
 }
 
-export const Grid: React.FC<GridProps> = ({ snake }) => {
+export const Grid: React.FC<GridProps> = ({ direction }) => {
   const gridRef = useRef<HTMLDivElement>(null);
+  const [snake, _] = useState<Snake>(new Snake());
+  const [delay, setDelay] = useState<number | null>(1000);
   const { gridDimensions, size, gridLoading } = useSetupGrid(gridRef);
+  const [reDraw, setReDraw] = useState(false);
+
+  useInterval(() => {
+    let current: SnakeNode | null = snake.head;
+
+    while (current !== null) {
+      if (current.prev) {
+        current.prev.x = current.x;
+        current.prev.y = current.y;
+      }
+      current = current.prev;
+    }
+    switch (direction) {
+      case "left":
+        snake.head.y -= 1;
+        break;
+      case "right":
+        snake.head.y += 1;
+        break;
+      case "up":
+        snake.head.x -= 1;
+        break;
+      case "down":
+        snake.head.x += 1;
+        break;
+      default:
+        snake.head.y += 1;
+        break;
+    }
+    setReDraw((prev) => !prev);
+  }, delay);
 
   const displayGrid = () => {
-    return range(gridDimensions.rows).map((row, rowInd) =>
-      range(gridDimensions.cols).map((col, colInd) => {
+    return range(gridDimensions.rows).map((row) =>
+      range(gridDimensions.cols).map((col) => {
         var isSnake = false;
         var current: SnakeNode | null = snake.head;
         while (current !== null) {
@@ -23,13 +57,13 @@ export const Grid: React.FC<GridProps> = ({ snake }) => {
             isSnake = true;
             break;
           }
-          current = current.next;
+          current = current.prev;
         }
         return (
           <GridNode
             row={row}
             col={col}
-            key={`${rowInd} | ${colInd}`}
+            key={`${row} | ${col}`}
             snake={isSnake}
             food={false}
           />

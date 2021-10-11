@@ -1,6 +1,5 @@
 import type { NextPage } from "next";
 import { useState } from "react";
-import { Snake } from "../classes/Snake";
 import { Grid } from "../components/Grid";
 import { Head } from "../components/Head";
 import { useModelSetup } from "../hooks/useModelSetup";
@@ -9,7 +8,9 @@ import { getWord } from "../utils/getWord";
 const Home: NextPage = () => {
   const [currentWord, setCurrentWord] = useState<number | null>(null);
   const { recognizer, labels, loading } = useModelSetup();
-  const [snake, setSnake] = useState<Snake>(new Snake());
+  const [direction, setDirection] = useState<"left" | "right" | "up" | "down">(
+    "down"
+  );
 
   const listen = async () => {
     if (recognizer)
@@ -44,7 +45,7 @@ const Home: NextPage = () => {
           Stop listening
         </button>
         <div>current word: {currentWord && labels![currentWord]}</div>
-        <Grid snake={snake} />
+        <Grid direction={direction} />
       </div>
     </div>
   );
