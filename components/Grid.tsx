@@ -2,7 +2,9 @@ import React, { HTMLProps, useRef, useState } from "react";
 import { Snake } from "../classes/Snake";
 import useInterval from "../hooks/useInterval";
 import { useSetupGrid } from "../hooks/useSetupGrid";
-import { SnakeNode } from "../types";
+import { Food, SnakeNode } from "../types";
+import { didSnakeEatFood } from "../utils/didSnakeEatFood";
+import { extendSnake } from "../utils/extendSnake";
 import { range } from "../utils/range";
 import { updateSnakesPosition } from "../utils/updateSnakesPosition";
 import { GameModal } from "./GameModal";
@@ -24,25 +26,25 @@ export const Grid: React.FC<GridProps> = ({ direction, ...props }) => {
   const [__, setReDraw] = useState(false);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const maxScore = gridDimensions.rows * gridDimensions.cols - 1;
-  const [snakeLocations, setSnakeLocations] = useState(
-    new Set<string>(`${snake.head.x} | ${snake.head.y}`)
-  );
-  const [food, setFood] = useState<{ x: number; y: number } | null>(null);
+  const [food, setFood] = useState<Food>(null);
 
   useInterval(() => {
-    if (
-      !updateSnakesPosition(snake, direction, snakeLocations, gridDimensions)
-    ) {
+    if (!updateSnakesPosition(snake, direction, gridDimensions)) {
       setGameState({ ...gameState, won: false });
       setDelay(null);
       setModalOpen(true);
+    }
+    if (didSnakeEatFood(snake, food)) {
+      extendSnake(snake, gridDimensions);
+      setGameState({ ...gameState, score: gameState.score + 1 });
+      spawnFood();
     }
     setReDraw((prev) => !prev);
   }, delay);
 
   const displayGrid = () => {
-    return range(gridDimensions.rows).map((row) =>
-      range(gridDimensions.cols).map((col) => {
+    return range(gridDimensions.cols).map((col) =>
+      range(gridDimensions.rows).map((row) => {
         var isSnake = false;
         var current: SnakeNode | null = snake.head;
         while (current !== null) {
@@ -71,11 +73,10 @@ export const Grid: React.FC<GridProps> = ({ direction, ...props }) => {
     let xPos = Math.floor(Math.random() * gridDimensions.rows);
     let yPos = Math.floor(Math.random() * gridDimensions.cols);
     // if a snake is already on that square
-    while (snakeLocations.has(`${xPos} | ${yPos}`)) {
+    while (snake.body.has(`${xPos} | ${yPos}`)) {
       xPos = Math.floor(Math.random() * gridDimensions.rows);
       yPos = Math.floor(Math.random() * gridDimensions.cols);
     }
-    console.log(`Food spawning at: [${xPos}, ${yPos}] `);
     setFood({ x: xPos, y: yPos });
   };
 
@@ -88,7 +89,7 @@ export const Grid: React.FC<GridProps> = ({ direction, ...props }) => {
     <div {...props}>
       <div
         ref={gridRef}
-        className="h-96 w-96 bg-black bg-opacity-50 flex flex-wrap"
+        className="h-64 w-64 bg-black bg-opacity-50 flex flex-wrap"
       >
         {gridLoading ? <div>loading</div> : displayGrid()}
       </div>

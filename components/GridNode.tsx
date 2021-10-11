@@ -15,7 +15,7 @@ export const GridNode: React.FC<GridNodeProps> = ({
 }) => {
   return (
     <div
-      className={`h-4 w-4 ${snake && "bg-gray-700"} ${food && "bg-red-800"}`}
+    className={`h-4 w-4 ${snake && "bg-gray-700 border border-gray-500"} ${food && "bg-red-800"}`}
       id={`row:${row} | col:${col}`}
     ></div>
   );

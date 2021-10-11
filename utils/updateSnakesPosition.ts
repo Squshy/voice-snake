@@ -1,11 +1,11 @@
 import { Snake } from "../classes/Snake";
 import { GridDimensions, SnakeNode } from "../types";
+import { snakeToString } from "./snakeToString";
 
 // returns true if its a not losing move, false otherwise
 export const updateSnakesPosition = (
   snake: Snake,
   direction: string,
-  snakeLocations: Set<string>,
   gridDimensions: GridDimensions
 ): boolean => {
   let current: SnakeNode | null = snake.head;
@@ -16,29 +16,29 @@ export const updateSnakesPosition = (
   switch (direction) {
     case "left":
       if (
-        snake.head.y - 1 < 0 ||
-        snakeLocations.has(`${snake.head.x} | ${snake.head.y - 1}`)
+        snake.head.x - 1 < 0 ||
+        snake.body.has(snakeToString(snake.head.x - 1, snake.head.y))
       )
         return false;
       break;
     case "right":
       if (
-        snake.head.y + 1 > gridDimensions.rows ||
-        snakeLocations.has(`${snake.head.x} | ${snake.head.y + 1}`)
+        snake.head.x + 1 >= gridDimensions.rows ||
+        snake.body.has(snakeToString(snake.head.x + 1, snake.head.y))
       )
         return false;
       break;
     case "up":
       if (
-        snake.head.x - 1 < 0 ||
-        snakeLocations.has(`${snake.head.x - 1} | ${snake.head.y}`)
+        snake.head.y - 1 < 0 ||
+        snake.body.has(snakeToString(snake.head.x, snake.head.y - 1))
       )
         return false;
       break;
     case "down":
       if (
-        snake.head.x + 1 > gridDimensions.cols ||
-        snakeLocations.has(`${snake.head.x + 1} | ${snake.head.y}`)
+        snake.head.y + 1 >= gridDimensions.cols ||
+        snake.body.has(snakeToString(snake.head.x, snake.head.y + 1))
       )
         return false;
       break;
@@ -52,21 +52,24 @@ export const updateSnakesPosition = (
     current.y = prevY;
     prevX = tmp_x;
     prevY = tmp_y;
+    if (current.prev === null) {
+      snake.body.delete(snakeToString(tmp_x, tmp_y));
+    }
     current = current.prev;
   }
 
   switch (direction) {
     case "left":
-      snake.head.y -= 1;
-      break;
-    case "right":
-      snake.head.y += 1;
-      break;
-    case "up":
       snake.head.x -= 1;
       break;
-    case "down":
+    case "right":
       snake.head.x += 1;
+      break;
+    case "up":
+      snake.head.y -= 1;
+      break;
+    case "down":
+      snake.head.y += 1;
       break;
   }
   return true;
