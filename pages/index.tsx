@@ -1,5 +1,5 @@
 import type { NextPage } from "next";
-import { useState } from "react";
+import React, { useState } from "react";
 import { Grid } from "../components/Grid";
 import { Head } from "../components/Head";
 import { useModelSetup } from "../hooks/useModelSetup";
@@ -8,15 +8,15 @@ import { getWord } from "../utils/getWord";
 const Home: NextPage = () => {
   const [currentWord, setCurrentWord] = useState<number | null>(null);
   const { recognizer, labels, loading } = useModelSetup();
-  const [direction, setDirection] = useState<string>(
-    "right"
-  );
+  const [direction, setDirection] = useState<string>("right");
 
   const listen = async () => {
     if (recognizer)
       await recognizer.listen(
         async (result) => {
-          const curWord = getWord(Array.from(result.scores as Float32Array)).index;
+          const curWord = getWord(
+            Array.from(result.scores as Float32Array)
+          ).index;
           setCurrentWord(curWord);
           setDirection(labels![curWord]);
         },
@@ -26,6 +26,30 @@ const Home: NextPage = () => {
 
   const stopListening = () => {
     if (recognizer) recognizer.stopListening();
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    switch (e.key) {
+      case "Down":
+      case "ArrowDown":
+        setDirection("down");
+        break;
+      case "Up":
+      case "ArrowUp":
+        setDirection("up");
+        break;
+      case "Right":
+      case "ArrowRight":
+        setDirection("right");
+        break;
+      case "Left":
+      case "ArrowLeft":
+        setDirection("left");
+        break;
+      default:
+        setDirection("right");
+        break;
+    }
   };
 
   if (loading)
@@ -45,7 +69,7 @@ const Home: NextPage = () => {
           Stop listening
         </button>
         <div>current word: {currentWord && labels![currentWord]}</div>
-        <Grid direction={direction} />
+        <Grid direction={direction} tabIndex={-1} onKeyDown={handleKeyPress} />
       </div>
     </div>
   );

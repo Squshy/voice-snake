@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { HTMLProps, useEffect, useRef, useState } from "react";
 import { Snake } from "../classes/Snake";
 import useInterval from "../hooks/useInterval";
 import { useSetupGrid } from "../hooks/useSetupGrid";
@@ -7,11 +7,11 @@ import { range } from "../utils/range";
 import { updateSnakesPosition } from "../utils/updateSnakesPosition";
 import { GridNode } from "./GridNode";
 
-interface GridProps {
+type GridProps = HTMLProps<HTMLDivElement> & {
   direction: string;
-}
+};
 
-export const Grid: React.FC<GridProps> = ({ direction }) => {
+export const Grid: React.FC<GridProps> = ({ direction, ...props }) => {
   const gridRef = useRef<HTMLDivElement>(null);
   const [snake, _] = useState<Snake>(new Snake());
   const [delay, setDelay] = useState<number | null>(250);
@@ -68,7 +68,7 @@ export const Grid: React.FC<GridProps> = ({ direction }) => {
   };
 
   return (
-    <div>
+    <div {...props}>
       <div
         ref={gridRef}
         className="h-96 w-96 bg-black bg-opacity-50 flex flex-wrap"
