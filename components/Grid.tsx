@@ -1,9 +1,10 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Snake } from "../classes/Snake";
 import useInterval from "../hooks/useInterval";
 import { useSetupGrid } from "../hooks/useSetupGrid";
 import { SnakeNode } from "../types";
 import { range } from "../utils/range";
+import { updateSnakesPosition } from "../utils/updateSnakesPosition";
 import { GridNode } from "./GridNode";
 
 interface GridProps {
@@ -13,42 +14,30 @@ interface GridProps {
 export const Grid: React.FC<GridProps> = ({ direction }) => {
   const gridRef = useRef<HTMLDivElement>(null);
   const [snake, _] = useState<Snake>(new Snake());
-  const [delay, setDelay] = useState<number | null>(1000);
-  const { gridDimensions, size, gridLoading } = useSetupGrid(gridRef);
+  const [delay, setDelay] = useState<number | null>(250);
+  const { gridDimensions, gridLoading } = useSetupGrid(gridRef);
+  const [gameState, setGameState] = useState<{
+    won: boolean;
+    lost: boolean;
+    message: string;
+  }>({ won: false, lost: false, message: "" });
   const [__, setReDraw] = useState(false);
 
-  useInterval(() => {
-    let current: SnakeNode | null = snake.head;
-    let prevX = current.x;
-    let prevY = current.y;
-    current = current.prev;
-    
-    while (current !== null) {
-      const tmp_x = current.x;
-      const tmp_y = current.y;
-      current.x = prevX;
-      current.y = prevY;
-      prevX = tmp_x;
-      prevY = tmp_y;
-      current = current.prev;
+  useEffect(() => {
+    if (gameState.lost || gameState.won) {
+      setDelay(null);
     }
+  }, [gameState]);
 
-    switch (direction) {
-      case "left":
-        snake.head.y -= 1;
-        break;
-      case "right":
-        snake.head.y += 1;
-        break;
-      case "up":
-        snake.head.x -= 1;
-        break;
-      case "down":
-        snake.head.x += 1;
-        break;
-      default:
-        snake.head.y += 1;
-        break;
+  useInterval(() => {
+    updateSnakesPosition(snake, direction);
+    if (
+      snake.head.x >= gridDimensions.rows ||
+      snake.head.x < 0 ||
+      snake.head.y >= gridDimensions.cols ||
+      snake.head.y < 0
+    ) {
+      setGameState({ ...gameState, lost: true, message: "You lose" });
     }
     setReDraw((prev) => !prev);
   }, delay);
