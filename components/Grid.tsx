@@ -15,18 +15,24 @@ export const Grid: React.FC<GridProps> = ({ direction }) => {
   const [snake, _] = useState<Snake>(new Snake());
   const [delay, setDelay] = useState<number | null>(1000);
   const { gridDimensions, size, gridLoading } = useSetupGrid(gridRef);
-  const [reDraw, setReDraw] = useState(false);
+  const [__, setReDraw] = useState(false);
 
   useInterval(() => {
     let current: SnakeNode | null = snake.head;
-
+    let prevX = current.x;
+    let prevY = current.y;
+    current = current.prev;
+    
     while (current !== null) {
-      if (current.prev) {
-        current.prev.x = current.x;
-        current.prev.y = current.y;
-      }
+      const tmp_x = current.x;
+      const tmp_y = current.y;
+      current.x = prevX;
+      current.y = prevY;
+      prevX = tmp_x;
+      prevY = tmp_y;
       current = current.prev;
     }
+
     switch (direction) {
       case "left":
         snake.head.y -= 1;

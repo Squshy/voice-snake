@@ -8,17 +8,17 @@ import { getWord } from "../utils/getWord";
 const Home: NextPage = () => {
   const [currentWord, setCurrentWord] = useState<number | null>(null);
   const { recognizer, labels, loading } = useModelSetup();
-  const [direction, setDirection] = useState<"left" | "right" | "up" | "down">(
-    "down"
+  const [direction, setDirection] = useState<string>(
+    "right"
   );
 
   const listen = async () => {
     if (recognizer)
       await recognizer.listen(
         async (result) => {
-          setCurrentWord(
-            getWord(Array.from(result.scores as Float32Array)).index
-          );
+          const curWord = getWord(Array.from(result.scores as Float32Array)).index;
+          setCurrentWord(curWord);
+          setDirection(labels![curWord]);
         },
         { includeSpectrogram: true, probabilityThreshold: 0.7 }
       );
