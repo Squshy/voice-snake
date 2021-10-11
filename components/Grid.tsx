@@ -1,10 +1,11 @@
-import React, { HTMLProps, useEffect, useRef, useState } from "react";
+import React, { HTMLProps, useRef, useState } from "react";
 import { Snake } from "../classes/Snake";
 import useInterval from "../hooks/useInterval";
 import { useSetupGrid } from "../hooks/useSetupGrid";
 import { SnakeNode } from "../types";
 import { range } from "../utils/range";
 import { updateSnakesPosition } from "../utils/updateSnakesPosition";
+import { GameModal } from "./GameModal";
 import { GridNode } from "./GridNode";
 
 type GridProps = HTMLProps<HTMLDivElement> & {
@@ -17,27 +18,23 @@ export const Grid: React.FC<GridProps> = ({ direction, ...props }) => {
   const [delay, setDelay] = useState<number | null>(250);
   const { gridDimensions, gridLoading } = useSetupGrid(gridRef);
   const [gameState, setGameState] = useState<{
-    won: boolean;
-    lost: boolean;
-    message: string;
-  }>({ won: false, lost: false, message: "" });
+    won: boolean | null;
+    score: number;
+  }>({ won: null, score: 0 });
   const [__, setReDraw] = useState(false);
-
-  useEffect(() => {
-    if (gameState.lost || gameState.won) {
-      setDelay(null);
-    }
-  }, [gameState]);
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const maxScore = gridDimensions.rows * gridDimensions.cols - 1;
+  const [snakeLocations, setSnakeLocations] = useState(
+    new Set<string>(`${snake.head.x} | ${snake.head.y}`)
+  );
 
   useInterval(() => {
-    updateSnakesPosition(snake, direction);
     if (
-      snake.head.x >= gridDimensions.rows ||
-      snake.head.x < 0 ||
-      snake.head.y >= gridDimensions.cols ||
-      snake.head.y < 0
+      !updateSnakesPosition(snake, direction, snakeLocations, gridDimensions)
     ) {
-      setGameState({ ...gameState, lost: true, message: "You lose" });
+      setGameState({ ...gameState, won: false });
+      setDelay(null);
+      setModalOpen(true);
     }
     setReDraw((prev) => !prev);
   }, delay);
@@ -75,6 +72,20 @@ export const Grid: React.FC<GridProps> = ({ direction, ...props }) => {
       >
         {gridLoading ? <div>loading</div> : displayGrid()}
       </div>
+      <GameModal
+        isOpen={modalOpen}
+        closeModal={() => setModalOpen(false)}
+        hasWon={gameState.won}
+        score={gameState.score}
+        maxScore={maxScore}
+      />
+      <button onClick={() => setModalOpen((prev) => !prev)}>Toggle</button>
+      <button
+        onClick={() => setDelay(250)}
+        className="p-4 border rounded-md m-2"
+      >
+        Play
+      </button>
     </div>
   );
 };
