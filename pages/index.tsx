@@ -3,12 +3,13 @@ import React, { useState } from "react";
 import { Grid } from "../components/Grid";
 import { Head } from "../components/Head";
 import { useModelSetup } from "../hooks/useModelSetup";
+import { Direction } from "../types";
 import { getWord } from "../utils/getWord";
 
 const Home: NextPage = () => {
   const [currentWord, setCurrentWord] = useState<number | null>(null);
   const { recognizer, labels, loading } = useModelSetup();
-  const [direction, setDirection] = useState<string>("right");
+  const [direction, setDirection] = useState<Direction>({ x: 0, y: 0 });
 
   const listen = async () => {
     if (recognizer)
@@ -18,7 +19,7 @@ const Home: NextPage = () => {
             Array.from(result.scores as Float32Array)
           ).index;
           setCurrentWord(curWord);
-          setDirection(labels![curWord]);
+          // setDirection(labels![curWord]);
         },
         { includeSpectrogram: true, probabilityThreshold: 0.7 }
       );
@@ -32,22 +33,19 @@ const Home: NextPage = () => {
     switch (e.key) {
       case "Down":
       case "ArrowDown":
-        setDirection("down");
+        setDirection({ x: 0, y: 1 });
         break;
       case "Up":
       case "ArrowUp":
-        setDirection("up");
+        setDirection({ x: 0, y: -1 });
         break;
       case "Right":
       case "ArrowRight":
-        setDirection("right");
+        setDirection({ x: 1, y: 0 });
         break;
       case "Left":
       case "ArrowLeft":
-        setDirection("left");
-        break;
-      default:
-        setDirection("right");
+        setDirection({ x: -1, y: 0 });
         break;
     }
   };

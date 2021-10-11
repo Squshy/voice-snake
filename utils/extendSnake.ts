@@ -1,11 +1,11 @@
 import { Snake } from "../classes/Snake";
-import { GridDimensions, SnakeNode } from "../types";
+import { Direction, GridDimensions, SnakeNode } from "../types";
 import { snakeToString } from "./snakeToString";
 
 export const extendSnake = (
   snake: Snake,
   gridDimensions: GridDimensions,
-  direction: string
+  direction: Direction
 ) => {
   let last: SnakeNode | null = snake.head;
   while (last.prev !== null) {

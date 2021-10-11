@@ -2,7 +2,7 @@ import React, { HTMLProps, useRef, useState } from "react";
 import { Snake } from "../classes/Snake";
 import useInterval from "../hooks/useInterval";
 import { useSetupGrid } from "../hooks/useSetupGrid";
-import { Food, SnakeNode } from "../types";
+import { Direction, Food, SnakeNode } from "../types";
 import { didSnakeEatFood } from "../utils/didSnakeEatFood";
 import { extendSnake } from "../utils/extendSnake";
 import { range } from "../utils/range";
@@ -11,7 +11,7 @@ import { GameModal } from "./GameModal";
 import { GridNode } from "./GridNode";
 
 type GridProps = HTMLProps<HTMLDivElement> & {
-  direction: string;
+  direction: Direction;
 };
 
 export const Grid: React.FC<GridProps> = ({ direction, ...props }) => {
