@@ -35,7 +35,7 @@ export const Grid: React.FC<GridProps> = ({ direction, ...props }) => {
       setModalOpen(true);
     }
     if (didSnakeEatFood(snake, food)) {
-      extendSnake(snake, gridDimensions);
+      extendSnake(snake, gridDimensions, direction);
       setGameState({ ...gameState, score: gameState.score + 1 });
       spawnFood();
     }

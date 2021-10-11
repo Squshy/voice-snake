@@ -5,6 +5,7 @@ import { snakeToString } from "./snakeToString";
 export const extendSnake = (
   snake: Snake,
   gridDimensions: GridDimensions,
+  direction: string
 ) => {
   let last: SnakeNode | null = snake.head;
   while (last.prev !== null) {

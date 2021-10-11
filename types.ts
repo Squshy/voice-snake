@@ -1,6 +1,6 @@
 export type RecordType = Record<number, string>;
 
-export type SnakeBody = { x: number; y: number };
+export type SnakeNode = { x: number; y: number; prev: SnakeNode | null };
 
 export type Food = { x: number; y: number } | null;
 

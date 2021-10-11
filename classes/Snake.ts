@@ -1,12 +1,16 @@
-import { SnakeBody } from "../types";
+import { SnakeNode } from "../types";
 import { snakeToString } from "../utils/snakeToString";
 
 export class Snake {
-  body: SnakeBody[];
-  locations: Set<string>;
+  head: SnakeNode;
+  body: Set<string>;
 
   constructor() {
-    this.body = [{x: 0, y: 0}]
-    this.locations = new Set<string>(snakeToString(this.body[0].x, this.body[0].y));
+    this.head = {
+      x: 0,
+      y: 0,
+      prev: null,
+    };
+    this.body = new Set<string>(snakeToString(this.head.x, this.head.y));
   }
 }
