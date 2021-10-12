@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
 import React, { useState } from "react";
-import { Grid } from "../components/Grid";
+import { Game } from "../components/Game";
 import { Head } from "../components/Head";
 import { DIRECTIONS } from "../constants";
 import { useModelSetup } from "../hooks/useModelSetup";
@@ -8,7 +8,6 @@ import { Direction } from "../types";
 import { getWord } from "../utils/getWord";
 
 const Home: NextPage = () => {
-  const [currentWord, setCurrentWord] = useState<number | null>(null);
   const { recognizer, labels, loading } = useModelSetup();
   const [direction, setDirection] = useState<Direction>(DIRECTIONS.RIGHT);
 
@@ -19,15 +18,28 @@ const Home: NextPage = () => {
           const curWord = getWord(
             Array.from(result.scores as Float32Array)
           ).index;
-          setCurrentWord(curWord);
-          // setDirection(labels![curWord]);
+          switch (labels![curWord]) {
+            case "down":
+              setDirection(DIRECTIONS.DOWN);
+              break;
+            case "up":
+              setDirection(DIRECTIONS.UP);
+              break;
+            case "right":
+              setDirection(DIRECTIONS.RIGHT);
+              break;
+            case "left":
+              setDirection(DIRECTIONS.LEFT);
+              break;
+          }
         },
-        { includeSpectrogram: true, probabilityThreshold: 0.7 }
+        { includeSpectrogram: true, probabilityThreshold: 0.9 }
       );
   };
 
   const stopListening = () => {
     if (recognizer) recognizer.stopListening();
+    setDirection(DIRECTIONS.RIGHT);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -55,20 +67,17 @@ const Home: NextPage = () => {
     return <div className="bg-gray-900 min-h-screen text-white">LOADING</div>;
 
   return (
-    <div className="bg-gray-900 p-12 flex flex-col space-y-12 items-center min-h-screen">
-      <div className="bg-gray-800 border rounded-md border-gray-700 text-white p-6 w-full">
+    <div className="bg-gray-900 p-12 flex flex-col space-y-12 min-h-screen justify-center">
+      <div className="bg-gray-800 border rounded-md border-gray-700 text-white p-6 w-full items-center flex flex-col">
         <Head />
-        <button onClick={() => listen()} className="p-4 border rounded-md mr-8">
-          Listen
-        </button>
-        <button
-          onClick={() => stopListening()}
-          className="p-4 border rounded-md"
-        >
-          Stop listening
-        </button>
-        <div>current word: {currentWord && labels![currentWord]}</div>
-        <Grid direction={direction} tabIndex={-1} onKeyDown={handleKeyPress} />
+        <Game
+          direction={direction}
+          tabIndex={-1}
+          onKeyDown={handleKeyPress}
+          listen={listen}
+          stopListening={stopListening}
+          className="flex"
+        />
       </div>
     </div>
   );

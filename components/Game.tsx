@@ -12,11 +12,18 @@ import { updateSnakesPosition } from "../utils/updateSnakesPosition";
 import { GameModal } from "./GameModal";
 import { GridNode } from "./GridNode";
 
-type GridProps = HTMLProps<HTMLDivElement> & {
+type GameProps = HTMLProps<HTMLDivElement> & {
   direction: Direction;
+  listen: () => void;
+  stopListening: () => void;
 };
 
-export const Grid: React.FC<GridProps> = ({ direction, ...props }) => {
+export const Game: React.FC<GameProps> = ({
+  direction,
+  listen,
+  stopListening,
+  ...props
+}) => {
   const gridRef = useRef<HTMLDivElement>(null);
   const [snake, setSnake] = useState<Snake>(() => new Snake());
   const [delay, setDelay] = useState<number | null>(null);
@@ -27,14 +34,13 @@ export const Grid: React.FC<GridProps> = ({ direction, ...props }) => {
   }>({ won: null, score: 0 });
   const [_, setReDraw] = useState(false);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
-  const maxScore = gridDimensions.rows * gridDimensions.cols - 1;
   const [food, setFood] = useState<Food>(null);
+  const maxScore = gridDimensions.rows * gridDimensions.cols - 1;
 
   useInterval(() => {
     if (checkCollision(snake, direction, gridDimensions)) {
       setGameState({ ...gameState, won: false });
-      setDelay(null);
-      setModalOpen(true);
+      endGame();
       return;
     }
     updateSnakesPosition(snake, direction);
@@ -42,8 +48,7 @@ export const Grid: React.FC<GridProps> = ({ direction, ...props }) => {
       extendSnake(snake);
       if (checkForWin(gameState.score, maxScore)) {
         setGameState({ won: true, score: gameState.score });
-        setDelay(null);
-        setModalOpen(true);
+        endGame();
         return;
       } else {
         setGameState((prev) => {
@@ -97,6 +102,7 @@ export const Grid: React.FC<GridProps> = ({ direction, ...props }) => {
   const playGame = () => {
     resetGame();
     setDelay(250);
+    listen();
     spawnFood();
   };
 
@@ -105,13 +111,25 @@ export const Grid: React.FC<GridProps> = ({ direction, ...props }) => {
     setGameState({ won: null, score: 0 });
   };
 
+  const endGame = () => {
+    stopListening();
+    setDelay(null);
+    setModalOpen(true);
+  };
+
   return (
     <div {...props}>
+      <button
+        onClick={() => playGame()}
+        className="p-4 border rounded-md mr-4 bg-green-500 border-green-400 w-24"
+      >
+        Play
+      </button>
       <div
         ref={gridRef}
-        className="h-8 w-8 bg-black bg-opacity-50 flex flex-wrap"
+        className="h-96 w-96 bg-black bg-opacity-50 flex flex-wrap"
       >
-        {gridLoading ? <div>loading</div> : displayGrid()}
+        {displayGrid()}
       </div>
       <GameModal
         isOpen={modalOpen}
@@ -120,9 +138,10 @@ export const Grid: React.FC<GridProps> = ({ direction, ...props }) => {
         score={gameState.score}
         maxScore={maxScore}
       />
-      <button onClick={() => playGame()} className="p-4 border rounded-md m-2">
-        Play
-      </button>
+      <div className="p-4 border ml-4 rounded-md w-24 bg-black bg-opacity-25 border-opacity-25 flex flex-col justify-center space-y-12">
+        <h3 className="text-md font-semibold">Score: {gameState.score}</h3>
+        <h3 className="text-md font-semibold">Speed: {}</h3>
+      </div>
     </div>
   );
 };
