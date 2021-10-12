@@ -2,6 +2,7 @@ import type { NextPage } from "next";
 import React, { useState } from "react";
 import { Grid } from "../components/Grid";
 import { Head } from "../components/Head";
+import { DIRECTIONS } from "../constants";
 import { useModelSetup } from "../hooks/useModelSetup";
 import { Direction } from "../types";
 import { getWord } from "../utils/getWord";
@@ -9,7 +10,7 @@ import { getWord } from "../utils/getWord";
 const Home: NextPage = () => {
   const [currentWord, setCurrentWord] = useState<number | null>(null);
   const { recognizer, labels, loading } = useModelSetup();
-  const [direction, setDirection] = useState<Direction>({ x: 0, y: 0 });
+  const [direction, setDirection] = useState<Direction>(DIRECTIONS.RIGHT);
 
   const listen = async () => {
     if (recognizer)
@@ -33,19 +34,19 @@ const Home: NextPage = () => {
     switch (e.key) {
       case "Down":
       case "ArrowDown":
-        setDirection({ x: 0, y: 1 });
+        setDirection(DIRECTIONS.DOWN);
         break;
       case "Up":
       case "ArrowUp":
-        setDirection({ x: 0, y: -1 });
+        setDirection(DIRECTIONS.UP);
         break;
       case "Right":
       case "ArrowRight":
-        setDirection({ x: 1, y: 0 });
+        setDirection(DIRECTIONS.RIGHT);
         break;
       case "Left":
       case "ArrowLeft":
-        setDirection({ x: -1, y: 0 });
+        setDirection(DIRECTIONS.LEFT);
         break;
     }
   };

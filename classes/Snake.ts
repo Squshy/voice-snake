@@ -12,8 +12,7 @@ export class Snake {
       prev: null,
     };
     this.body = new Set<string>([]);
-    this.body.add(snakeToString(0, 0));
-    console.log("SNAKE BODY:", this.body);
+    this.addPosition(this.head);
   }
 
   removePosition(node: SnakeNode) {
@@ -21,7 +20,7 @@ export class Snake {
   }
 
   addPosition(node: SnakeNode) {
-    console.log("SNAKE BODY:", this.body);
     this.body.add(snakeToString(node.x, node.y));
+    console.log("SNAKE BODY:", this.body);
   }
 }

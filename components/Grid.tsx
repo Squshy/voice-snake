@@ -3,6 +3,7 @@ import { Snake } from "../classes/Snake";
 import useInterval from "../hooks/useInterval";
 import { useSetupGrid } from "../hooks/useSetupGrid";
 import { Direction, Food, SnakeNode } from "../types";
+import { checkCollision } from "../utils/checkCollision";
 import { didSnakeEatFood } from "../utils/didSnakeEatFood";
 import { extendSnake } from "../utils/extendSnake";
 import { range } from "../utils/range";
@@ -30,14 +31,18 @@ export const Grid: React.FC<GridProps> = ({ direction, ...props }) => {
   const [food, setFood] = useState<Food>(null);
 
   useInterval(() => {
-    if (!updateSnakesPosition(snake, direction, gridDimensions)) {
+    if (checkCollision(snake, direction, gridDimensions)) {
       setGameState({ ...gameState, won: false });
       setDelay(null);
       setModalOpen(true);
+      return;
     }
+    updateSnakesPosition(snake, direction);
     if (didSnakeEatFood(snake, food)) {
       extendSnake(snake);
-      setGameState({ ...gameState, score: gameState.score + 1 });
+      setGameState((prev) => {
+        return { ...prev, score: prev.score + 1 };
+      });
       spawnFood();
     }
     setReDraw((prev) => !prev);
@@ -75,28 +80,16 @@ export const Grid: React.FC<GridProps> = ({ direction, ...props }) => {
     let yPos = Math.floor(Math.random() * gridDimensions.cols);
     console.log(snake.body);
     while (snake.body.has(snakeToString(xPos, yPos))) {
+      alert(
+        `Tried placing food at position [${xPos}, ${yPos}]\nDoes it exist in snake? ${snake.body.has(
+          snakeToString(xPos, yPos)
+        )}`
+      );
       xPos = Math.floor(Math.random() * gridDimensions.rows);
       yPos = Math.floor(Math.random() * gridDimensions.cols);
       console.log("SAME");
     }
-    // let xPos = 0,
-    //   yPos = 0;
-    // // if a snake is already on that square
-    // let exists = true;
-    // while (exists) {
-    //   xPos = Math.floor(Math.random() * gridDimensions.rows);
-    //   yPos = Math.floor(Math.random() * gridDimensions.cols);
-    //   let current: SnakeNode | null = snake.head;
-    //   while (current !== null) {
-    //     if (current.x !== xPos && current.y !== yPos) {
-    //       exists = false;
-    //       break;
-    //     } else {
-    //       console.log("ALREADY HERE");
-    //     }
-    //     current = current.prev;
-    //   }
-    // }
+
     console.log("Adding to coordinate: ", { x: xPos, y: yPos });
     setFood({ x: xPos, y: yPos });
     return;

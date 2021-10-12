@@ -9,7 +9,7 @@ export const checkCollision = (
   const updatedSnake: SnakeNode = {
     x: snake.head.x + direction.x,
     y: snake.head.y + direction.y,
-    prev: snake.head.prev,
+    prev: null,
   };
   const { rows, cols } = gridDimensions;
 
