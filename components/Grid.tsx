@@ -4,10 +4,10 @@ import useInterval from "../hooks/useInterval";
 import { useSetupGrid } from "../hooks/useSetupGrid";
 import { Direction, Food, SnakeNode } from "../types";
 import { checkCollision } from "../utils/checkCollision";
+import { checkForWin } from "../utils/checkForWin";
 import { didSnakeEatFood } from "../utils/didSnakeEatFood";
 import { extendSnake } from "../utils/extendSnake";
 import { range } from "../utils/range";
-import { snakeToString } from "../utils/snakeToString";
 import { updateSnakesPosition } from "../utils/updateSnakesPosition";
 import { GameModal } from "./GameModal";
 import { GridNode } from "./GridNode";
@@ -18,14 +18,14 @@ type GridProps = HTMLProps<HTMLDivElement> & {
 
 export const Grid: React.FC<GridProps> = ({ direction, ...props }) => {
   const gridRef = useRef<HTMLDivElement>(null);
-  const [snake, _] = useState<Snake>(() => new Snake());
+  const [snake, setSnake] = useState<Snake>(() => new Snake());
   const [delay, setDelay] = useState<number | null>(null);
   const { gridDimensions, gridLoading } = useSetupGrid(gridRef);
   const [gameState, setGameState] = useState<{
     won: boolean | null;
     score: number;
   }>({ won: null, score: 0 });
-  const [__, setReDraw] = useState(false);
+  const [_, setReDraw] = useState(false);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const maxScore = gridDimensions.rows * gridDimensions.cols - 1;
   const [food, setFood] = useState<Food>(null);
@@ -40,11 +40,19 @@ export const Grid: React.FC<GridProps> = ({ direction, ...props }) => {
     updateSnakesPosition(snake, direction);
     if (didSnakeEatFood(snake, food)) {
       extendSnake(snake);
-      setGameState((prev) => {
-        return { ...prev, score: prev.score + 1 };
-      });
+      if (checkForWin(gameState.score, maxScore)) {
+        setGameState({ won: true, score: gameState.score });
+        setDelay(null);
+        setModalOpen(true);
+        return;
+      } else {
+        setGameState((prev) => {
+          return { ...prev, score: prev.score + 1 };
+        });
+      }
       spawnFood();
     }
+    // re-render
     setReDraw((prev) => !prev);
   }, delay);
 
@@ -66,6 +74,7 @@ export const Grid: React.FC<GridProps> = ({ direction, ...props }) => {
             col={col}
             key={`${row} | ${col}`}
             snake={isSnake}
+            head={snake.head.x === row && snake.head.y === col}
             food={
               food ? (food.x === row && food.y === col ? true : false) : false
             }
@@ -78,33 +87,29 @@ export const Grid: React.FC<GridProps> = ({ direction, ...props }) => {
   const spawnFood = () => {
     let xPos = Math.floor(Math.random() * gridDimensions.rows);
     let yPos = Math.floor(Math.random() * gridDimensions.cols);
-    console.log(snake.body);
-    while (snake.body.has(snakeToString(xPos, yPos))) {
-      alert(
-        `Tried placing food at position [${xPos}, ${yPos}]\nDoes it exist in snake? ${snake.body.has(
-          snakeToString(xPos, yPos)
-        )}`
-      );
+    while (snake.has(xPos, yPos)) {
       xPos = Math.floor(Math.random() * gridDimensions.rows);
       yPos = Math.floor(Math.random() * gridDimensions.cols);
-      console.log("SAME");
     }
-
-    console.log("Adding to coordinate: ", { x: xPos, y: yPos });
     setFood({ x: xPos, y: yPos });
-    return;
   };
 
   const playGame = () => {
+    resetGame();
     setDelay(250);
     spawnFood();
+  };
+
+  const resetGame = () => {
+    setSnake(() => new Snake());
+    setGameState({ won: null, score: 0 });
   };
 
   return (
     <div {...props}>
       <div
         ref={gridRef}
-        className="h-32 w-32 bg-black bg-opacity-50 flex flex-wrap"
+        className="h-8 w-8 bg-black bg-opacity-50 flex flex-wrap"
       >
         {gridLoading ? <div>loading</div> : displayGrid()}
       </div>
@@ -115,7 +120,6 @@ export const Grid: React.FC<GridProps> = ({ direction, ...props }) => {
         score={gameState.score}
         maxScore={maxScore}
       />
-      <button onClick={() => setModalOpen((prev) => !prev)}>Toggle</button>
       <button onClick={() => playGame()} className="p-4 border rounded-md m-2">
         Play
       </button>

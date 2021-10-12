@@ -1,5 +1,4 @@
 import { SnakeNode } from "../types";
-import { snakeToString } from "../utils/snakeToString";
 
 export class Snake {
   head: SnakeNode;
@@ -16,11 +15,18 @@ export class Snake {
   }
 
   removePosition(node: SnakeNode) {
-    this.body.delete(snakeToString(node.x, node.y));
+    this.body.delete(this.toString(node.x, node.y));
   }
 
   addPosition(node: SnakeNode) {
-    this.body.add(snakeToString(node.x, node.y));
-    console.log("SNAKE BODY:", this.body);
+    this.body.add(this.toString(node.x, node.y));
+  }
+
+  has(x: number, y: number) {
+    return this.body.has(this.toString(x, y));
+  }
+
+  toString(x: number, y: number) {
+    return `${x} | ${y}`;
   }
 }

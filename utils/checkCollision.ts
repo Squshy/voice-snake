@@ -1,21 +1,17 @@
 import { Snake } from "../classes/Snake";
-import { Direction, GridDimensions, SnakeNode } from "../types";
+import { Direction, GridDimensions} from "../types";
 
 export const checkCollision = (
   snake: Snake,
   direction: Direction,
   gridDimensions: GridDimensions
 ): boolean => {
-  const updatedSnake: SnakeNode = {
-    x: snake.head.x + direction.x,
-    y: snake.head.y + direction.y,
-    prev: null,
-  };
+  const x = snake.head.x + direction.x;
+  const y = snake.head.y + direction.y;
   const { rows, cols } = gridDimensions;
-
-  if (updatedSnake.x >= rows) return true;
-  if (updatedSnake.x < 0) return true;
-  if (updatedSnake.y >= cols) return true;
-  if (updatedSnake.y < 0) return true;
-  return false;
+  if (x >= rows) return true;
+  if (x < 0) return true;
+  if (y >= cols) return true;
+  if (y < 0) return true;
+  return snake.has(x, y);
 };
