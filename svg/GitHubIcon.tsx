@@ -1,9 +1,7 @@
-import React from "react";
+import React, { HTMLProps } from "react";
 // https://iconmonstr.com/github-1-svg/
 
-interface GitHubIconProps {
-  className: string;
-}
+type GitHubIconProps = HTMLProps<SVGElement>;
 
 export const GitHubIcon: React.FC<GitHubIconProps> = ({className}) => {
   return (

@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { CogIcon, XIcon } from "@heroicons/react/solid";
 import { SettingsButton } from "./SettingsButton";
 import { SettingsOption } from "./SettingsOption";
+import { GitHubLink } from "./GitHubLink";
 
 interface SettingsProps {}
 
@@ -44,8 +45,11 @@ export const Settings: React.FC<SettingsProps> = ({}) => {
             <div
               className={`bg-gray-900 bg-opacity-90 h-full flex w-1/2 md:w-1/3 border-gray-700 border-r flex flex-col pointer-events-auto`}
             >
-              <div className={`px-6 py-6 border-b border-gray-700`}>
+              <div
+                className={`px-6 py-6 border-b border-gray-700 flex justify-between items-center`}
+              >
                 <h1 className={`text-lg font-semibold text-white`}>Settings</h1>
+                <GitHubLink />
               </div>
               <SettingsOption />
             </div>

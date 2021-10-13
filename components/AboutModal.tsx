@@ -1,5 +1,6 @@
 import { Dialog, Transition } from "@headlessui/react";
 import React, { Fragment } from "react";
+import { GitHubLink } from "./GitHubLink";
 
 interface AboutModalProps {
   canLeave: boolean;
@@ -78,7 +79,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({
                 </p>
               </div>
 
-              <div className="mt-4 h-8">
+              <div className="mt-4 h-8 flex justify-between">
                 <Transition
                   show={canLeave}
                   enter="ease-out duration-300"
@@ -96,6 +97,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({
                     Lemme play
                   </button>
                 </Transition>
+                <GitHubLink />
               </div>
             </div>
           </Transition.Child>
