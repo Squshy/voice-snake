@@ -8,6 +8,7 @@ export const GitHubLink: React.FC<GitHubLinkProps> = ({}) => {
     <a
       href="https://github.com/Squshy/voice-snake"
       aria-label="Project's GitHub repository"
+      className="focus:outline-none focus-visible:outline-none"
     >
       <GitHubIcon className="w-4 h-4 md:h-6 md:w-6 text-gray-400 hover:scale-125 transform duration-200 ease-out hover:text-white" />
     </a>
