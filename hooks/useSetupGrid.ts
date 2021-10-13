@@ -1,6 +1,7 @@
 import { RefObject, useEffect, useLayoutEffect, useState } from "react";
 import { PX_TO_REM_CONVERTER } from "../constants";
 import { GridDimensions } from "../types";
+import { getRemToPixelMultiplier } from "../utils/getRemToPixelMultiplier";
 
 interface WindowSizeProps {
   height: number;
@@ -32,11 +33,13 @@ export const useSetupGrid = (gridRef: RefObject<HTMLDivElement>) => {
         cols: 10,
       };
       if (gridRef.current) {
+        console.log(size.width)
+        const px = getRemToPixelMultiplier(size.width)
         newGrid.cols = Math.floor(
-          gridRef.current.getBoundingClientRect().width / PX_TO_REM_CONVERTER
+          gridRef.current.getBoundingClientRect().width / (PX_TO_REM_CONVERTER*px)
         );
         newGrid.rows = Math.floor(
-          gridRef.current.getBoundingClientRect().height / PX_TO_REM_CONVERTER
+          gridRef.current.getBoundingClientRect().height / (px*PX_TO_REM_CONVERTER)
         );
       }
 

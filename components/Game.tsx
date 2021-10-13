@@ -1,4 +1,4 @@
-import React, { HTMLProps, useRef, useState } from "react";
+import React, { HTMLProps, useEffect, useRef, useState } from "react";
 import { Snake } from "../classes/Snake";
 import useInterval from "../hooks/useInterval";
 import { useSetupGrid } from "../hooks/useSetupGrid";
@@ -28,7 +28,7 @@ export const Game: React.FC<GameProps> = ({
   const gameContainerRef = useRef<HTMLDivElement>(null);
   const [snake, setSnake] = useState<Snake>(() => new Snake());
   const [delay, setDelay] = useState<number | null>(null);
-  const { gridDimensions, gridLoading } = useSetupGrid(gridRef);
+  const { gridDimensions, size } = useSetupGrid(gridRef);
   const [gameState, setGameState] = useState<{
     won: boolean | null;
     score: number;
@@ -37,6 +37,12 @@ export const Game: React.FC<GameProps> = ({
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [food, setFood] = useState<Food>(null);
   const maxScore = gridDimensions.rows * gridDimensions.cols - 1;
+
+  // when the width changes, reset game and redraw seeing as responsive values could have changed
+  useEffect(() => {
+    resetGame();
+    setDelay(null);
+  }, [size.width]);
 
   useInterval(() => {
     if (checkCollision(snake, direction, gridDimensions)) {
@@ -120,8 +126,12 @@ export const Game: React.FC<GameProps> = ({
   };
 
   return (
-    <div {...props} ref={gameContainerRef} className="flex focus:outline-none focus-visible:outline-none">
-      <div className="flex h-96 w-96 items-center relative z-0">
+    <div
+      {...props}
+      ref={gameContainerRef}
+      className="flex focus:outline-none focus-visible:outline-none flex-col space-y-6"
+    >
+      <div className="flex h-60 w-60 md:h-96 md:w-96 items-center relative z-0">
         <div
           ref={gridRef}
           className="bg-black w-full h-full bg-opacity-50 flex flex-wrap"
@@ -146,7 +156,7 @@ export const Game: React.FC<GameProps> = ({
         score={gameState.score}
         maxScore={maxScore}
       />
-      <div className="p-4 border ml-4 rounded-md w-24 bg-black bg-opacity-25 border-opacity-25 flex flex-col justify-center space-y-12">
+      <div className="p-4 border rounded-md w-full bg-black bg-opacity-25 border-opacity-25 flex justify-center justify-evenly">
         <h3 className="text-md font-semibold">Score: {gameState.score}</h3>
         <h3 className="text-md font-semibold">Speed: {}</h3>
       </div>

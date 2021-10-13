@@ -12,7 +12,8 @@ const Home: NextPage = () => {
   const [direction, setDirection] = useState<Direction>(DIRECTIONS.RIGHT);
 
   const listen = async () => {
-    if (recognizer)
+    if (recognizer) {
+      if (recognizer.isListening()) await recognizer.stopListening();
       await recognizer.listen(
         async (result) => {
           const curWord = getWord(
@@ -35,10 +36,11 @@ const Home: NextPage = () => {
         },
         { includeSpectrogram: true, probabilityThreshold: 0.9 }
       );
+    }
   };
 
   const stopListening = () => {
-    if (recognizer) recognizer.stopListening();
+    if (recognizer) if (recognizer.isListening()) recognizer.stopListening();
     setDirection(DIRECTIONS.RIGHT);
   };
 
@@ -67,8 +69,8 @@ const Home: NextPage = () => {
     return <div className="bg-gray-900 min-h-screen text-white">LOADING</div>;
 
   return (
-    <div className="bg-gray-900 p-12 flex flex-col space-y-12 min-h-screen justify-center">
-      <div className="bg-gray-800 border rounded-md border-gray-700 text-white p-6 w-full items-center flex flex-col">
+    <div className="bg-gray-900 p-12 flex  space-y-12 min-h-screen justify-center items-center">
+      <div className="bg-gray-800 border rounded-md border-gray-700 text-white p-6 max-w-lg items-center flex flex-col">
         <Head />
         <Game
           direction={direction}
