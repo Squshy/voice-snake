@@ -76,7 +76,6 @@ const Home: NextPage = () => {
           onKeyDown={handleKeyPress}
           listen={listen}
           stopListening={stopListening}
-          className="flex"
         />
       </div>
     </div>

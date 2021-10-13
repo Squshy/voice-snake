@@ -25,6 +25,7 @@ export const Game: React.FC<GameProps> = ({
   ...props
 }) => {
   const gridRef = useRef<HTMLDivElement>(null);
+  const gameContainerRef = useRef<HTMLDivElement>(null);
   const [snake, setSnake] = useState<Snake>(() => new Snake());
   const [delay, setDelay] = useState<number | null>(null);
   const { gridDimensions, gridLoading } = useSetupGrid(gridRef);
@@ -75,8 +76,6 @@ export const Game: React.FC<GameProps> = ({
         }
         return (
           <GridNode
-            row={row}
-            col={col}
             key={`${row} | ${col}`}
             snake={isSnake}
             head={snake.head.x === row && snake.head.y === col}
@@ -100,6 +99,9 @@ export const Game: React.FC<GameProps> = ({
   };
 
   const playGame = () => {
+    if (gameContainerRef.current) {
+      gameContainerRef.current.focus();
+    }
     resetGame();
     setDelay(250);
     listen();
@@ -118,18 +120,24 @@ export const Game: React.FC<GameProps> = ({
   };
 
   return (
-    <div {...props}>
-      <button
-        onClick={() => playGame()}
-        className="p-4 border rounded-md mr-4 bg-green-500 border-green-400 w-24"
-      >
-        Play
-      </button>
-      <div
-        ref={gridRef}
-        className="h-96 w-96 bg-black bg-opacity-50 flex flex-wrap"
-      >
-        {displayGrid()}
+    <div {...props} ref={gameContainerRef} className="flex focus:outline-none focus-visible:outline-none">
+      <div className="flex h-96 w-96 items-center relative z-0">
+        <div
+          ref={gridRef}
+          className="bg-black w-full h-full bg-opacity-50 flex flex-wrap"
+        >
+          {displayGrid()}
+        </div>
+        {delay === null && (
+          <div className="absolute inset-0 flex justify-center items-center z-10 backdrop-filter backdrop-blur-sm ">
+            <button
+              onClick={() => playGame()}
+              className="p-4 border rounded-md bg-green-500 border-green-400 w-3/4 h-14"
+            >
+              Play
+            </button>
+          </div>
+        )}
       </div>
       <GameModal
         isOpen={modalOpen}
