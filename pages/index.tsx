@@ -2,6 +2,7 @@ import type { NextPage } from "next";
 import React, { useState } from "react";
 import { Game } from "../components/Game";
 import { Head } from "../components/Head";
+import { Settings } from "../components/Settings";
 import { DIRECTIONS } from "../constants";
 import { useModelSetup } from "../hooks/useModelSetup";
 import { Direction } from "../types";
@@ -69,7 +70,7 @@ const Home: NextPage = () => {
     return <div className="bg-gray-900 min-h-screen text-white">LOADING</div>;
 
   return (
-    <div className="bg-gray-900 p-12 flex  space-y-12 min-h-screen justify-center items-center">
+    <div className="bg-gray-900 p-12 flex space-y-12 min-h-screen justify-center items-center">
       <div className="bg-gray-800 border rounded-md border-gray-700 text-white p-6 max-w-lg items-center flex flex-col">
         <Head />
         <Game
@@ -80,6 +81,7 @@ const Home: NextPage = () => {
           stopListening={stopListening}
         />
       </div>
+      <Settings />
     </div>
   );
 };

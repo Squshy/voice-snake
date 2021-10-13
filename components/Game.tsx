@@ -156,9 +156,9 @@ export const Game: React.FC<GameProps> = ({
         score={gameState.score}
         maxScore={maxScore}
       />
-      <div className="p-4 border rounded-md w-full bg-black bg-opacity-25 border-opacity-25 flex justify-center justify-evenly">
-        <h3 className="text-md font-semibold">Score: {gameState.score}</h3>
-        <h3 className="text-md font-semibold">Speed: {}</h3>
+      <div className="p-4 border rounded-md w-full bg-black bg-opacity-25 border-opacity-25 flex justify-center justify-evenly text-center">
+        <h3 className="text-md font-semibold w-full">Score: {gameState.score}</h3>
+        <h3 className="text-md font-semibold w-full">Speed: {}</h3>
       </div>
     </div>
   );
