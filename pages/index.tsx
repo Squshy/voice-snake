@@ -1,5 +1,6 @@
 import type { NextPage } from "next";
 import React, { useState } from "react";
+import { AboutModal } from "../components/AboutModal";
 import { Game } from "../components/Game";
 import { Head } from "../components/Head";
 import { Settings } from "../components/Settings";
@@ -11,6 +12,7 @@ import { getWord } from "../utils/getWord";
 const Home: NextPage = () => {
   const { recognizer, labels, loading } = useModelSetup();
   const [direction, setDirection] = useState<Direction>(DIRECTIONS.RIGHT);
+  const [showAbout, setShowAbout] = useState(true);
 
   const listen = async () => {
     if (recognizer) {
@@ -35,7 +37,7 @@ const Home: NextPage = () => {
               break;
           }
         },
-        { includeSpectrogram: true, probabilityThreshold: 0.9 }
+        { includeSpectrogram: true, probabilityThreshold: 0.7 }
       );
     }
   };
@@ -66,23 +68,27 @@ const Home: NextPage = () => {
     }
   };
 
-  if (loading)
-    return <div className="bg-gray-900 min-h-screen text-white">LOADING</div>;
-
   return (
-    <div className="bg-gray-900 p-12 flex space-y-12 min-h-screen justify-center items-center">
-      <div className="bg-gray-800 border rounded-md border-gray-700 text-white p-6 max-w-lg items-center flex flex-col">
-        <Head />
-        <Game
-          direction={direction}
-          tabIndex={-1}
-          onKeyDown={handleKeyPress}
-          listen={listen}
-          stopListening={stopListening}
-        />
+    <>
+      <AboutModal
+        canLeave={!loading}
+        closeModal={() => setShowAbout(false)}
+        isOpen={showAbout}
+      />
+      <div className="bg-gray-900 p-12 flex space-y-12 min-h-screen justify-center items-center">
+        <div className="bg-gray-800 border rounded-md border-gray-700 text-white p-6 max-w-lg items-center flex flex-col">
+          <Head />
+          <Game
+            direction={direction}
+            tabIndex={-1}
+            onKeyDown={handleKeyPress}
+            listen={listen}
+            stopListening={stopListening}
+          />
+        </div>
+        <Settings />
       </div>
-      <Settings />
-    </div>
+    </>
   );
 };
 

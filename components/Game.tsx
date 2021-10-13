@@ -1,5 +1,6 @@
 import React, { HTMLProps, useEffect, useRef, useState } from "react";
 import { Snake } from "../classes/Snake";
+import { useSpeed } from "../context/SpeedContext";
 import useInterval from "../hooks/useInterval";
 import { useSetupGrid } from "../hooks/useSetupGrid";
 import { Direction, Food, SnakeNode } from "../types";
@@ -37,6 +38,7 @@ export const Game: React.FC<GameProps> = ({
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [food, setFood] = useState<Food>(null);
   const maxScore = gridDimensions.rows * gridDimensions.cols - 1;
+  const speed = useSpeed();
 
   // when the width changes, reset game and redraw seeing as responsive values could have changed
   useEffect(() => {
@@ -109,7 +111,7 @@ export const Game: React.FC<GameProps> = ({
       gameContainerRef.current.focus();
     }
     resetGame();
-    setDelay(250);
+    setDelay(speed.value);
     listen();
     spawnFood();
   };
@@ -158,7 +160,7 @@ export const Game: React.FC<GameProps> = ({
       />
       <div className="p-4 border rounded-md w-full bg-black bg-opacity-25 border-opacity-25 flex justify-center justify-evenly text-center">
         <h3 className="text-md font-semibold w-full">Score: {gameState.score}</h3>
-        <h3 className="text-md font-semibold w-full">Speed: {}</h3>
+        <h3 className="text-md font-semibold w-full">Speed: {speed.text}</h3>
       </div>
     </div>
   );

@@ -6,3 +6,11 @@ export const DIRECTIONS = {
   UP: { x: 0, y: -1 },
   DOWN: { x: 0, y: 1 },
 };
+
+export const SPEEDS = [
+  { id: 1, text: "Really Slow", value: 450 },
+  { id: 2, text: "Slow", value: 350 },
+  { id: 3, text: "Medium", value: 250 },
+  { id: 4, text: "Fast", value: 150 },
+  { id: 5, text: "Really Fast", value: 75 },
+];

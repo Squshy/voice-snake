@@ -12,3 +12,5 @@ export type GridDimensions = {
 export type Direction = Coordinate;
 
 export type Coordinate = { x: number; y: number };
+
+export type Speed = { id: number; text: string; value: number };

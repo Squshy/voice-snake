@@ -2,6 +2,7 @@ import { Transition, Dialog } from "@headlessui/react";
 import React, { useState } from "react";
 import { CogIcon, XIcon } from "@heroicons/react/solid";
 import { SettingsButton } from "./SettingsButton";
+import { SettingsOption } from "./SettingsOption";
 
 interface SettingsProps {}
 
@@ -31,7 +32,6 @@ export const Settings: React.FC<SettingsProps> = ({}) => {
               className={`bg-gray-900 absolute inset-0 backdrop-filter backdrop-blur bg-opacity-50`}
             />
           </Transition.Child>
-
           <Transition.Child
             enter="transition ease-out duration-300 transform"
             enterFrom="-translate-x-full"
@@ -42,12 +42,12 @@ export const Settings: React.FC<SettingsProps> = ({}) => {
             className={`absolute inset-0 z-40 flex pointer-events-none`}
           >
             <div
-              className={`bg-gray-900 bg-opacity-90 h-full flex w-1/2 md:w-1/3 border-gray-700 border-r flex flex-col space-y-4 pointer-events-auto`}
+              className={`bg-gray-900 bg-opacity-90 h-full flex w-1/2 md:w-1/3 border-gray-700 border-r flex flex-col pointer-events-auto`}
             >
-              <div className={`px-6 py-6 `}>
+              <div className={`px-6 py-6 border-b border-gray-700`}>
                 <h1 className={`text-lg font-semibold text-white`}>Settings</h1>
               </div>
-              swag
+              <SettingsOption />
             </div>
           </Transition.Child>
         </Dialog>
