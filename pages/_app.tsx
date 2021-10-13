@@ -1,8 +1,13 @@
-import type { AppProps } from 'next/app'
-import 'tailwindcss/tailwind.css'
+import type { AppProps } from "next/app";
+import "tailwindcss/tailwind.css";
+import { SpeedProvider } from "../context/SpeedContext";
 
 function MyApp({ Component, pageProps }: AppProps) {
-  return <Component {...pageProps} />
+  return (
+    <SpeedProvider>
+      <Component {...pageProps} />
+    </SpeedProvider>
+  );
 }
 
 export default MyApp;
