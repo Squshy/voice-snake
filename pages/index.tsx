@@ -1,6 +1,7 @@
 import type { NextPage } from "next";
 import React, { useState } from "react";
 import { AboutModal } from "../components/AboutModal";
+import { Controls } from "../components/Controls";
 import { Game } from "../components/Game";
 import { Head } from "../components/Head";
 import { Settings } from "../components/Settings";
@@ -68,6 +69,10 @@ const Home: NextPage = () => {
     }
   };
 
+  const updateDirection = (direction: Direction) => {
+    setDirection(direction);
+  };
+
   return (
     <>
       <AboutModal
@@ -75,17 +80,20 @@ const Home: NextPage = () => {
         closeModal={() => setShowAbout(false)}
         isOpen={showAbout}
       />
-      <div className="bg-gray-900 p-12 flex space-y-12 min-h-screen justify-center items-center">
+      <div className="bg-gray-900 p-6 md:p-12 space-y-4 md:space-y-12 flex min-h-screen justify-center items-center flex-col">
         <div className="bg-gray-800 border rounded-md border-gray-700 text-white p-6 max-w-lg items-center flex flex-col">
           <Head />
-          <Game
-            direction={direction}
-            tabIndex={-1}
-            onKeyDown={handleKeyPress}
-            listen={listen}
-            stopListening={stopListening}
-          />
+          {!loading && (
+            <Game
+              direction={direction}
+              tabIndex={-1}
+              onKeyDown={handleKeyPress}
+              listen={listen}
+              stopListening={stopListening}
+            />
+          )}
         </div>
+        <Controls setDirection={updateDirection} />
         <Settings />
       </div>
     </>
