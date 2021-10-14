@@ -13,10 +13,9 @@ export const AboutModal: React.FC<AboutModalProps> = ({
   closeModal,
   isOpen,
 }) => {
-
   const closeIfAble = () => {
-    if(canLeave) closeModal();
-  }
+    if (canLeave) closeModal();
+  };
   return (
     <Transition appear show={isOpen} as={Fragment}>
       <Dialog
@@ -54,12 +53,15 @@ export const AboutModal: React.FC<AboutModalProps> = ({
             leaveTo="opacity-0 scale-95"
           >
             <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-gray-700 shadow-xl rounded-2xl">
-              <Dialog.Title
-                as="h1"
-                className="text-3xl font-medium leading-normal text-green-400"
-              >
-                Voice Snek🐍
-              </Dialog.Title>
+              <div className="flex justify-between items-center">
+                <Dialog.Title
+                  as="h1"
+                  className="text-3xl font-medium leading-normal text-green-400"
+                >
+                  Voice Snek🐍
+                </Dialog.Title>
+                <GitHubLink />
+              </div>
               <div className="mt-2">
                 <p className="text-sm text-gray-300">
                   This is a snake game which allows you to use your microphone
@@ -83,7 +85,7 @@ export const AboutModal: React.FC<AboutModalProps> = ({
                 </p>
               </div>
 
-              <div className="mt-4 h-8 flex justify-between">
+              <div className="mt-4 h-8">
                 <Transition
                   show={canLeave}
                   enter="ease-out duration-300"
@@ -101,7 +103,6 @@ export const AboutModal: React.FC<AboutModalProps> = ({
                     Lemme play
                   </button>
                 </Transition>
-                <GitHubLink />
               </div>
             </div>
           </Transition.Child>
